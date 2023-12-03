@@ -14,6 +14,7 @@ import { SettingsService } from '../../../services/settings.js';
 import { UsersService } from '../../../services/users.js';
 import { getSchema } from '../../../utils/get-schema.js';
 import { defaultAdminRole, defaultAdminUser } from '../../utils/defaults.js';
+import { apply } from '../schema/apply';
 
 export default async function bootstrap({ skipAdminInit }: { skipAdminInit?: boolean }): Promise<void> {
 	logger.info('Initializing bootstrap...');
@@ -46,6 +47,11 @@ export default async function bootstrap({ skipAdminInit }: { skipAdminInit?: boo
 		logger.info('Database already initialized, skipping install');
 		logger.info('Running migrations...');
 		await runMigrations(database, 'latest');
+	}
+
+	if (env['SCHEMA_FILE'] && typeof env['SCHEMA_FILE'] === 'string' && env['SCHEMA_FILE'].length > 0) {
+		logger.info('Applying schema...');
+		await apply(env['SCHEMA_FILE'], { yes: true, dryRun: false });
 	}
 
 	logger.info('Done');
