@@ -14,7 +14,7 @@ import { SettingsService } from '../../../services/settings.js';
 import { UsersService } from '../../../services/users.js';
 import { getSchema } from '../../../utils/get-schema.js';
 import { defaultAdminRole, defaultAdminUser } from '../../utils/defaults.js';
-import { apply } from '../schema/apply';
+import { apply } from '../schema/apply.js';
 
 export default async function bootstrap({ skipAdminInit }: { skipAdminInit?: boolean }): Promise<void> {
 	logger.info('Initializing bootstrap...');
