@@ -43,15 +43,20 @@ export default async function bootstrap({ skipAdminInit }: { skipAdminInit?: boo
 			const settingsService = new SettingsService({ schema });
 			await settingsService.upsertSingleton({ project_name: env['PROJECT_NAME'] });
 		}
+
+		if (env['SCHEMA_INIT_FILE'] && typeof env['SCHEMA_INIT_FILE'] === 'string' && env['SCHEMA_INIT_FILE'].length > 0) {
+			logger.info('Applying schema...');
+			await apply(env['SCHEMA_INIT_FILE'], { yes: true, dryRun: false });
+		}
 	} else {
 		logger.info('Database already initialized, skipping install');
 		logger.info('Running migrations...');
 		await runMigrations(database, 'latest');
-	}
 
-	if (env['SCHEMA_FILE'] && typeof env['SCHEMA_FILE'] === 'string' && env['SCHEMA_FILE'].length > 0) {
-		logger.info('Applying schema...');
-		await apply(env['SCHEMA_FILE'], { yes: true, dryRun: false });
+		if (env['SCHEMA_FILE'] && typeof env['SCHEMA_FILE'] === 'string' && env['SCHEMA_FILE'].length > 0) {
+			logger.info('Applying schema...');
+			await apply(env['SCHEMA_FILE'], { yes: true, dryRun: false });
+		}
 	}
 
 	logger.info('Done');
